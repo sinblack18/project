@@ -1,0 +1,188 @@
+{# common/base.html을 상속받겠음 #}
+{% extends 'common/base.html' %}
+{% block title %}[게시글보기]{% endblock title %}
+{% block body %}
+<script>
+    // function showUpdateForm(param) {
+    //     // .../board/0/update_reply?rid=0 << 이런주소
+    //     location.href = 'update_reply?rid='+param;
+    // }
+    
+    // function showdeleteForm(param) {
+        //     location.href = 'delete_reply/'+param;
+        // }
+
+    function write_reply() {
+
+        let bNum = '{{board.id}}';
+        let replyText = document.getElementById('replyText').value;
+
+        $.ajax({
+            url:'/board/{{board.id}}/write_reply/',
+            type:'POST',
+            headers: { 'X-CSRFTOKEN': '{{csrf_token}}' },
+            data: { 'replyText': replyText },
+            success: function () {
+                document.getElementById('replyText').value="";
+                loadReplyList();                
+            }
+        })
+
+    }
+
+    function showUpdateForm(rid) {
+        location.href = '/board/{{board.id}}/load_update_reply/' + rid +'/';
+        }
+
+    
+    function load_reply_update() {
+        let bNum = '{{board.id}}';
+        let rid = '{{reply.id}}';
+        let replyText = document.getElementById('replyText').value;
+
+        $.ajax({
+            url: '/board/{{board.id}}/load_update_reply/' + rid + '/',
+            type: 'post',
+            headers: { 'X-CSRFTOKEN': '{{csrf_token}}' },
+            data: { 'replyText' : replyText },
+            success: function () {
+                document.getElementById('replyText').value ="";
+                loadReplyList();
+                update_next();
+            }
+        });
+    }
+    
+    
+    function showdeleteForm(param) {
+        let bNum = '{{board.id}}';
+        let rNum = param;
+
+        $.ajax({
+            url:'/board/'+ bNum +'/load_reply_delete/'+ rNum + '/',
+            type:'post',
+            headers: { 'X-CSRFTOKEN': '{{csrf_token}}' },
+            data:{'id': rNum},
+            success: function(){
+                loadReplyList();
+            }
+        });
+    }
+
+    // function update_next() {
+    //     url = '/board/{{board.id}}/';
+
+    //     $.ajax({
+    //         url:url,
+    //         type:'get',
+    //         headers: { 'X-CSRFTOKEN': '{{csrf_token}}' },
+    //         success: function() {
+    //             alert("수정 완료!");
+    //         }
+    //     })
+    // }
+    
+
+    $(document).ready(function() {
+        loadReplyList();
+    });
+
+    function loadReplyList() {
+        let bNum = '{{board.id}}';
+        console.log(bNum);
+        $.ajax({
+            url: '/board/load_reply/',
+            type:'post',
+            headers: { 'X-CSRFTOKEN': '{{csrf_token}}' }, //정해져 있는 키 변경하면 안됨
+            data: {'id': bNum},
+            success: function(response) {
+                // console.log(response);
+                // console.log(JSON.parse(response["response"]));
+
+                let replyList = JSON.parse(response["response"]);
+
+                let str ="";
+
+                $.each(replyList, function(i, item) {
+                    // console.log(i +" "+ item.fields.reply_content);
+                    let replyContent = item.fields.reply_content;
+                    console.log(replyContent);
+                    let rNum = item.pk;
+                    console.log(rNum);
+
+                    str += replyContent;
+                    str += "&nbsp";
+                    str += `<a href="#" onclick="showUpdateForm(` + rNum + `)">수정</a>`;
+                    str += "&nbsp";
+                    str += `<a href="#" onclick="showdeleteForm(` + rNum + `)">삭제</a>`;
+                    str += "<br>";
+
+                    // $("#replyList").append(replyContent + "<br>");
+                });
+                $("#replyList").html(str);
+            }
+        });
+    }
+</script>
+    <h1>게시글 보기</h1>
+    <table border="1">
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>글쓴이</th>
+            <th>작성시간</th>
+            <th>조회수</th>
+        </tr>
+        <tr>
+            <td>{{ board.id }}</td>
+            <td>{{ board.title1 }}</td>
+            <td>{{ board.author }}</td>
+            <td>{{ board.input_date }}</td>
+            <td>{{ board.view_count }}</td>
+        </tr>
+        <tr>
+            <td colspan="5">내용</td>
+        </tr>
+        <tr>
+            <td colspan="5">{{ board.content }}</td>
+        </tr>
+    </table>
+    <br>
+    <!-- username끼리 비교 -->
+    {% if board.author.username == user.username %}
+        <a href="{% url 'board:update' board.id %}">수정</a>&nbsp;&nbsp;
+        <a href="{% url 'board:delete' board.id %}" onclick="javascript: return confirm('삭제하시겠습니까?')">삭제</a>
+    {% endif %}
+    <br><br>
+    <div id="replyArea">
+        <!-- 댓글 목록 표시할 곳 -->
+        <div id="replyList">
+            <!-- board 객체 뿐만 아니라 board와 FK로 엮인 객체는 -->
+            <!-- board.모델이름_set으로 가져올 수 있다 -->
+            <!-- {% if board.reply_set %}
+                {% for reply in board.reply_set.all %}
+                    {{reply}} &nbsp;&nbsp;&nbsp;
+                    <a href="#" onclick="javascript:showUpdateForm('{{reply.id}}')">수정</a>
+                    <a href="{% url 'board:delete_reply' id=board.id rid=reply.id %}">삭제</a>
+                    <br>
+                {% endfor %}
+            {% else %}
+                <p>등록된 댓글이 없습니다.</p>
+            {% endif %} -->
+        </div>
+        <!-- 댓글 입력 폼 -->
+        <div id="replyForm">
+            {% csrf_token %}
+            <input type="hidden" name="rid" value="{{ reply.id }}">
+            <textarea id="replyText">{{reply.reply_content}}</textarea>
+            {% if not update %}
+            <input type="button" id="wr" value="댓글 쓰기" onclick="write_reply()">
+            {% else %}
+            <input type="button" id="ud" value="댓글 수정" onclick="load_reply_update()">
+            {% endif %}
+        </div>
+    </div>
+    <!-- board.author는 user하고 비교한다 -->
+    <br>
+    <a href="../">글 목록</a>
+{% endblock body %}

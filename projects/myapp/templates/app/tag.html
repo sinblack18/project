@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>템플릿 태그 연습</h1>
+    <!--if문-->
+    {% if list %}
+    <p>리스트가 있습니다.</p>
+    {% else %}
+    <p>리스트가 없습니다.</p>
+    {% endif %}
+    <p></p>
+    {% if number > 0 %}
+    <p>0보다 큰 수입니다.</p>
+    {% elif number < 0 %}
+    <p>0보다 작은 수 입니다.</p>
+    {% else %}
+    <p>0입니다.</p>
+    {% endif %}
+
+    <!--템플릿 태그 for-->
+    {% for s in list %}
+    <p>과일이름 : {{s}}</p>
+    {% endfor %}
+
+    <table border="1">
+      {% for s in list%}
+      <tr>
+        <th>{{s}}</th>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>

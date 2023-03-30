@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>친구목록</title>
+    <!-- static file 불러오기 load static -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>친구목록</h1>
+    {{ fList }} <br>
+    <!-- 반복해서 출력하려면? -->
+    <table>
+        <tr>
+            <th>번호</th>
+            <th>이름</th>
+            <th>나이</th>
+            <th>소개</th>
+            <th>수정/삭제</th>
+        </tr>
+        {% for friend in fList %}
+        <tr>
+            <td>{{ friend.id }}</td>
+            <td>{{ friend.friend_name }}</td>
+            <td>{{ friend.friend_age }}</td>
+            <td>{{ friend.friend_bigo }}</td>
+            <td>
+                <a href="../update_friend/{{friend.id}}">수정</a> /
+                <a href="../delete_friend/{{friend.id}}">삭제</a>
+            </td>
+        </tr>
+        {% endfor %} <!-- 열고 닫기 잘 하자 -->
+    </table>
+    <br>
+    <form action="../search_friend/" method="post">
+        {% csrf_token %}
+        <input type="text" name="searchName">
+        <input type="submit" value="검색">
+    </form>
+    <!-- <form>
+        <input type="radio" name="condition" value="all">완전일치 &nbsp;
+        <input type="radio" name="condition" value="part">부분일치
+        <input type="text" name="searchName" />
+        <input type="submit" value="검색" />
+    </form>     -->
+</body>
+</html>

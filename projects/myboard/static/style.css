@@ -1,0 +1,21 @@
+table,
+tr,
+th,
+td {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+a {
+    text-decoration: none;
+    color: darkslategrey;
+}
+
+a:hover {
+    color: lime;
+    text-decoration: none;
+}
+
+p {
+    color: red;
+}

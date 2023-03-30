@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>주문 수정</h1>
+    <form action="../update/" method="post">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <th>주문 내용</th>
+                <td>
+                    <textarea name="order_text">{{order.order_text}}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>가격</th>
+                <td>
+                    <input type="number" name="price" value="{{order.price}}">
+                </td>
+            </tr>
+            <tr>
+                <th>주소</th>
+                <td>
+                    <input type="text" name="address" value="{{order.address}}">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:center">
+                    <input type="submit" value="주문">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <br>
+    <a href="../">세부 목록</a>
+</body>
+</html>

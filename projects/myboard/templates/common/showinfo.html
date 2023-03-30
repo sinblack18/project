@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function confirmDelete() {
+
+            let c = confirm("삭제하시겠습니까?");
+
+            if (c) {
+                location.href = '/delete/'
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>회원정보 보기</h1>
+    <table border="1">
+        <tr>
+            <th>유저 번호</th>
+            <td>{{user.id}}</td>
+        </tr>
+        <tr>
+            <th>아이디</th>
+            <td>{{user.username}}</td>
+        </tr>
+        <tr>
+            <th>이메일</th>
+            <td>{{user.email}}</td>
+        </tr>
+        <tr>
+            <th>이름</th>
+            <td>{{user.first_name}}</td>
+        </tr>
+        <tr>
+            <th>성</th>
+            <td>{{user.last_name}}</td>
+        </tr>
+    </table>
+    <ul>
+        <li>
+            <a href="#" onclick="confirmDelete()">회원정보삭제</a>
+        </li>
+        <li>
+            <a href="{% url 'common:update' %}">회원정보수정</a>
+        </li>
+        <li>
+            <a href="{% url 'common:index' %}">홈</a>
+        </li>
+    </ul>
+</body>
+</html>

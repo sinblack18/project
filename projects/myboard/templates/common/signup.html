@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>회원가입</h1>
+    <form action="{% url 'common:signup' %}" method="POST">
+        {% csrf_token %}
+        <!-- 적용한 name 속성은 UserCreationForm에서 제공하는 필드 이름과 같다 -->
+        <table>
+            <tr>
+                <!-- 아이디 -->
+                <th>ID </th>
+                <td><input type="text" name="username"></td>
+            </tr>
+            <tr>
+                <!-- 비밀번호 -->
+                <th>PW </th>
+                <td><input type="password" name="password1"></td>
+            </tr>
+            <tr>
+                <!-- 비밀번호확인 -->
+                <th>PW 확인 </th>
+                <td><input type="password" name="password2"></td>
+            </tr>
+            <tr>
+                <!-- email 확인 -->
+                <th>email </th>
+                <td><input type="email" name="email"></td>
+            </tr>
+            <tr>
+                <!-- first_name 확인 -->
+                <th>first_name </th>
+                <td><input type="text" name="first_name"></td>
+            </tr>
+            <tr>
+                <!-- last_name 확인 -->
+                <th>last_name </th>
+                <td><input type="text" name="last_name"></td>
+            </tr>
+            <tr>
+                <!-- 회원가입 -->
+                <td colspan="2" style="text-align: center;"><input type="submit" value="회원가입"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

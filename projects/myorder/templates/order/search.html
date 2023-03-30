@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>주문 조회</h1>
+    <table border="1">
+        <tr>
+            <th>주문번호</th>
+            <th>주문 내역</th>
+            <th>가격</th>
+            <th>작성일</th>
+            <th>주소</th>
+        </tr>
+        {% for order in order_list %}
+        <tr>
+            <td><a href="{{order.id}}">{{order.id}}</a></td>
+            <td>{{ order.order_text }}</td>
+            <td>{{ order.price }}</td>
+            <td>{{ order.order_date|date:"Y/m/d H:i D" }}</td>
+            <td>{{ order.address }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <form action="../search_address/" method="POST">
+        {% csrf_token %}
+        <input type="radio" name="condition" value="all" checked>전체 검색
+        <input type="radio" name="condition" value="part">전방일치 검색
+        <input type="text" name="search_address">
+        <input type="submit" value="검색">
+    </form>
+    <br>
+    <a href="../">초기화면</a>
+</body>
+</html>

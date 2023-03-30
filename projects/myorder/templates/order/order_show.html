@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>세부 목록</h1>
+    <table border="1">
+        <tr>
+            <th>주문 번호</th>
+            <th>가격</th>
+            <th>주문 날짜</th>
+            <th>주소</th>
+        </tr>
+        <tr>
+            <td>{{ orderid }}</td>
+            <td>{{ orderprice }}</td>
+            <td>{{ orderdate }}</td>
+            <td>{{ orderaddress }}</td>
+        </tr>
+        <tr>
+            <th colspan="4">주문 내용</th>
+        </tr>
+        <tr>
+            <td colspan="4">
+                {% for text in orderts %}
+                - {{text}} <br>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+    <br>
+    <a href="../">전체 주문 목록</a>&nbsp;
+    <a href="update/">수정</a>&nbsp;
+    <a href="delete/">삭제</a>
+</body>
+</html>
