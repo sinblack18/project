@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iteminfo</title>
+</head>
+<body>
+    <h1>iteminfo</h1>
+    <table border="1" style="text-align: center;">
+        <tr>
+            <th>상품 번호</th>
+            <th>상품명</th>
+            <th>재고</th>
+            <th>수정 / 삭제</th>
+        </tr>
+        {% for i in item %}
+        <tr>
+            <td>{{i.id}}</td>
+            <td>{{i.item_name}}</td>
+            <td>{{i.item_count}}</td>
+            <td>
+                <a href="{% url 'itemupdate' id=i.id %}">수정</a> / <a href="{% url 'itemdelete' id=i.id %}">삭제</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br><a href="{% url 'itemadd' %}">상품추가</a><br><br>
+    <div>
+        <form>
+            <input type="text" name="searchWord" value="{{ searchWord }}">
+            <input type="submit" value="상품명 검색">
+        </form>
+    </div>
+    <a href="../">홈</a>
+</body>
+</html>

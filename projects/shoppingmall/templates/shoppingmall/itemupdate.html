@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>itemupdate</title>
+</head>
+<body>
+    <h1>itemupdate</h1>
+    <div>
+        <form action="{% url 'itemupdate' id=item.id %}" method="POST">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>상품명:</th>
+                    <td><input type="text" name="item_name" value="{{item.item_name}}" readonly/></td>
+                </tr>
+                <tr>
+                    <th>재고:</th>
+                    <td><input type="number" name="item_count" value="{{item.item_count}}"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="수정"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <a href="../">뒤로</a>
+</body>
+</html>

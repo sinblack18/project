@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>orderinfo</title>
+</head>
+<body>
+    <h1>orderinfo</h1>
+    <table border="1" style="text-align: center;">
+        <tr>
+            <th>주문 번호</th>
+            <th>상품명</th>
+            <th>주문 수량</th>
+            <th>주문 시간</th>
+            <th>수정 / 삭제</th>
+        </tr>
+        {% for o in order %}
+        <tr>
+            <td>{{o.id}}</td>
+            <td>{{o.item_code.item_name}} <!-- {{o.item_code.id}} --></td>
+            <td>{{o.quantity}}</td>
+            <td>{{o.orderdate}}</td>
+            <td>
+                <a href="{% url 'orderupdate' id=o.id %}">수정</a> / <a href="{% url 'orderdelete' id=o.id %}">삭제</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <div>
+        <form>
+            <input type="text" name="searchWord" value="{{ searchWord }}">
+            <input type="submit" value="상품명 검색">
+        </form>
+    </div>
+    <br>
+    <a href="{% url 'orderadd' %}">주문하기</a><br>
+    <a href="../">홈</a>
+</body>
+</html>
