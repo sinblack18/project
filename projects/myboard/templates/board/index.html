@@ -40,8 +40,18 @@
                 <td>{{board.id}}</td>
                 <!-- 파라미터가 있는 주소를 호출할 때 -->
                 <!-- name 뒤에 한 칸 띄우고 파라미터의 값 지정 -->
-                <td><a href="{% url 'board:detail' board.id %}">{{ board.title1 }}</a></td>
-                <td>{{ board.author }} {{board.author_id}} {{board.author.username}}</td>
+                <td>
+                    <a href="{% url 'board:detail' board.id %}">
+                        {{ board.title1 }} &nbsp;
+                        <span style="font-size: 1px; color: blue;">[ {{ board.reply_set.all.count }} ]</span>
+                        {% if board.original_file_name %}
+                            ★
+                        {% endif %}
+                    </a>
+                </td>
+                <td>
+                    {{ board.author }}<!--{{board.author_id}} {{board.author.username}}-->
+                </td>
                 <td>{{ board.input_date|date:"Y/m/d H:i D" }}</td>
                 <td>{{ board.view_count }}</td>
             </tr>
@@ -81,15 +91,11 @@
         <input type="text" name="searchWord" value="{{ searchWord }}">
         <input type="submit" value="검색">
     </form>
-    <!-- <form action="search_board/" method="POST">
-        {% csrf_token %}
-        <input type="text" name="search">
-        <input type="submit" value="검색">
-    </form> -->
     <!-- 페이징 -->
     {% if page_obj.has_previous %}
-        <a href="?page=1">&laquo;처음 페이지로</a>
-        <a href="?page={{page_obj.previous_page_number}}">이전 페이지로</a>
+        <!-- GET의 parameter(쿼리스트링)은 URL의 구성요소와 별도로 표시 -->
+        <a href="{% url 'board:index' %}?page=1">&laquo;처음 페이지로</a> 
+        <a href="{% url 'board:index' %}?page={{page_obj.previous_page_number}}">이전 페이지로</a>
     {% endif %}
 
     <!-- Paginator의 number 현재 페이지 번호 -->
@@ -97,14 +103,14 @@
     page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
 
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number}}">다음 페이지로</a>
-        <a href="?page={{ page_obj.paginator.num_pages}}">마지막 페이지로 &raquo</a>
+        <a href="{% url 'board:index' %}?page={{ page_obj.next_page_number}}">다음 페이지로</a>
+        <a href="{% url 'board:index' %}?page={{ page_obj.paginator.num_pages}}">마지막 페이지로 &raquo</a>
     {% endif %}
     
     <br><br>
     <!-- 페이징 2 : 가지고 있는 페이지의 번호 다 보여주기 -->
     {% for page_number in page_obj.paginator.page_range %}
-        <a href="?page={{ page_number }}">{{ page_number }}</a>
+        <a href="{% url 'board:index' %}?page={{ page_number }}">{{ page_number }}</a>
     {% endfor %}
 
     <br><br>
@@ -113,15 +119,15 @@
     {% if page_number >= page_obj.number|add:-5 and page_number <= page_obj.number|add:5 %}
         {% if searchWord %}
             {% if page_number == page_obj.number %}
-                <a href="?page={{page_number}}&searchType={{searchType}}&searchWord={{searchWord}}" style="color:pink;">{{page_number}}</a>
+                <a href="{% url 'board:index' %}?page={{page_number}}&searchType={{searchType}}&searchWord={{searchWord}}" style="color:pink;">{{page_number}}</a>
             {%else%}
-                <a href="?page={{page_number}}&searchType={{searchType}}&searchWord={{searchWord}}">{{page_number}}</a>
+                <a href="{% url 'board:index' %}?page={{page_number}}&searchType={{searchType}}&searchWord={{searchWord}}">{{page_number}}</a>
             {% endif %}
         {% else %}
             {% if page_number == page_obj.number %}
-                <a href="?page={{ page_number }}" style="color:red;">{{page_number}}</a>
+                <a href="{% url 'board:index' %}?page={{ page_number }}" style="color:red;">{{page_number}}</a>
             {%else%}
-                <a href="?page={{ page_number }}">{{page_number}}</a>
+                <a href="{% url 'board:index' %}?page={{ page_number }}">{{page_number}}</a>
             {% endif %}
         {% endif %}
     {% endif %}

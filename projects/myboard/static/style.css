@@ -19,3 +19,12 @@ a:hover {
 p {
     color: red;
 }
+
+.replyCount {
+    font-size: 1px;
+    color: blue;
+}
+
+h1 {
+    color: brown;
+}

@@ -31,7 +31,43 @@
     }
 
     function showUpdateForm(rid) {
+
+        // $.ajax({
+        //     success: function () {
+        //         // alert("check");
+        //         $('#ud').show();
+        //         $('#wr').hide();
+        //         location.href = '/board/{{board.id}}/load_update_reply/' + rid + '/';
+        //     }
+        // })
+        
         location.href = '/board/{{board.id}}/load_update_reply/' + rid +'/';
+
+        // let id = '{{board.id}}';
+        // urlr = '/board/{{board.id}}/load_update_reply/' + rid + '/';
+        
+        // $.ajax({
+        //     url: urlr,
+        //     type:'get',
+        //     headers: { 'X-CSRFTOKEN': '{{csrf_token}}' },
+        //     data:{'id':id, 'rid':rid},
+        //     success: function () {
+        //         $('#ud').show();
+        //         $('#wr').hide();
+        //     }
+        // })
+
+        // $.ajax({
+        //     type: 'GET', // GET 방식으로 요청을 보냄
+        //     url: '/board/{{board.id}}/load_update_reply/' + rid + '/',
+        //     success: function (data) {
+        //         // 서버 측에서 전달받은 응답 데이터를 이용하여 필요한 작업을 수행
+        //         $('#ud').show();
+        //         $('#wr').hide();
+        //         $('#replyText').val(data.reply_content); // 댓글 내용을 수정 폼에 채움
+        //     }
+        // });
+
         }
 
     
@@ -48,7 +84,8 @@
             success: function () {
                 document.getElementById('replyText').value ="";
                 loadReplyList();
-                update_next();
+                // $('#ud').hide();
+                // $('#wr').show();
             }
         });
     }
@@ -56,13 +93,13 @@
     
     function showdeleteForm(param) {
         let bNum = '{{board.id}}';
-        let rNum = param;
+        let rid = param;
 
         $.ajax({
-            url:'/board/'+ bNum +'/load_reply_delete/'+ rNum + '/',
+            url:'/board/'+ bNum +'/load_reply_delete/'+ rid + '/',
             type:'post',
             headers: { 'X-CSRFTOKEN': '{{csrf_token}}' },
-            data:{'id': rNum},
+            data:{'rid': rid},
             success: function(){
                 loadReplyList();
             }
@@ -84,8 +121,103 @@
     
 
     $(document).ready(function() {
-        loadReplyList();
+        // 1. 수정 폼 숨기기
+        $("#updateForm").hide();
+
+        // 2. 버튼에 이벤트 달기
+        $("#btnWrite").click(function() {
+            // alert("여기는 write");
+            writeReply();
+        })
+
+        // 3. 수정하기 버튼에 에빈트 달기
+        $("#btnUpdate").click(function() {
+            // alert("here update");
+            updateReply();
+        })
+
+        loadReplyList1();
+        
     });
+
+    function updateReply() { // 수정링크 클릭 후 버튼 누르기까지 함수
+        let replyText = $("#replyTextUpdate").val();
+        let rid = $("#rid").val();
+
+        console.log(replyText);
+        console.log(rid);
+
+        if (replyText.length === 0) {
+            alert("비어있는 댓글로 수정할 수 없습니다.");
+            return; // 실행을 바로 멈춘다
+        }
+
+        let data = {
+            'rid':rid,
+            'replyText':replyText
+        };
+
+        $.ajax({
+            url: '{% url "board:update_reply" id=board.id %}',
+            type: 'post',
+            data: JSON.stringify(data),
+            headers: { 'X-CSRFTOKEN': '{{csrf_token}}' },
+            success: function(res) {
+                // console.log(res);
+                $("#replyTextWrite").val("");
+                $("#updateForm").hide();
+                $("#writeForm").show();
+                loadReplyList1();
+            }
+        })
+
+    }
+
+    function writeReply() {
+        // alert("여기는 writeReply");
+
+        // 1.textarea에 쓴 문자열 가져오기
+        let replyText = $("#replyTextWrite").val(); // 해당하는 문자열 가져오기
+
+        console.log(replyText);
+
+        if (replyText.length === 0 ) {
+            alert("댓글을 입력할 수 없습니다.");
+            return; // 실행을 바로 멈춘다
+        }
+
+        let data = { 'replyText' : replyText }
+
+        $.ajax({
+            url: '{% url "board:write_reply" id=board.id %}',
+            type: 'POST',
+            headers: { 'X-CSRFTOKEN': '{{csrf_token}}' },
+            data: JSON.stringify(data),
+            success: function (result) {
+                // console.log(result);
+                // 댓글창 초기화
+                $("#replyTextWrite").val("");
+                loadReplyList1();
+            }
+        })
+    }
+
+    function deleteReply(param) {
+        
+        let data = {'rid' : param};
+
+        $.ajax({
+            url:"{% url 'board:delete_reply' id=board.id %}",
+            type:"post",
+            data:JSON.stringify(data),
+            headers:{'X-CSRFTOKEN':'{{csrf_token}}'},
+            success: function(res) {
+                // console.log(res);
+                loadReplyList1();
+            }
+        })
+        
+    }
 
     function loadReplyList() {
         let bNum = '{{board.id}}';
@@ -95,11 +227,9 @@
             type:'post',
             headers: { 'X-CSRFTOKEN': '{{csrf_token}}' }, //정해져 있는 키 변경하면 안됨
             data: {'id': bNum},
-            success: function(response) {
-                // console.log(response);
-                // console.log(JSON.parse(response["response"]));
+            success: function(res) {
 
-                let replyList = JSON.parse(response["response"]);
+                let replyList = JSON.parse(res["res"]);
 
                 let str ="";
 
@@ -123,6 +253,70 @@
             }
         });
     }
+
+    function loadReplyList1() {
+        $.ajax({
+            url: '{% url "board:load_reply" id=board.id %}',
+            type:'get',
+            success: function(res) {
+                // console.log(res);
+                let str = "<table>";
+                $.each(res.replyList, function(index, item){
+                    // inputDate에 있는 필요없는 문자열들을 삭제
+                    let replacedDate = item.inputDate.replace("T", " ").replace("Z", "").split(".")[0]
+
+                    for (let i = 0; i < replacedDate.length; i++) {
+                        if (replacedDate.charAt(i) ==='-'){
+                            replacedDate = replacedDate.replace("-", "/");
+                        }                    
+                    } // javascript에서 replace는 1개만 실행하므로 전부 replace하기위해 반복문을 사용
+                    // console.log(item);
+
+                    str += "<tr>";
+                    str += "<td>" + item.replyText + "</td>";
+                    str += "<td>" + item.username + "</td>";
+                    str += "<td>" + replacedDate + "</td>"; // item.inputDate에서 replacedDate로 변경
+                    str += "<td>";
+                    if ('{{user.username}}' === item.username) {
+                        str += `<a href="#" onclick="showUpdateForm1(` + item.id + `)">수정</a>`;
+                        str += ` <a href="#" onclick="deleteReply(` + item.id + `)">삭제</a>`;
+                    }
+                    str += "</td>";
+                    str += "</tr>";
+                });
+                str += "</table>";
+
+                $("#replyList").html(str);
+            }
+        })
+    }
+
+    function showUpdateForm1(param) {
+        // 글쓰기창 숨기기
+        $("#writeForm").hide();
+        $("#updateForm").show();
+
+        // console.log(param);
+
+        $.ajax({
+            url:'{% url "board:update_reply" id=board.id %}',
+            type:'get',
+            data:{'rid': param},
+            success: function(res) {
+                // 폼요소.val() = 해당하는 폼 요소에 들어있는 값을 가져올 수 있다
+                // 폼요소.val(문자열) = 문자열을 해당 폼 요소에 지정할 수 있다
+                // 1. 수정입력창에 댓글 내용 표시
+                // console.log(res);
+                $("#replyTextUpdate").val(res.replyText);
+
+                // 2. rid라는 id를 가진 hidden 태그에 값 설정
+                $("#rid").val(param);
+            }
+        })
+    }
+
+    
+
 </script>
     <h1>게시글 보기</h1>
     <table border="1">
@@ -146,6 +340,15 @@
         <tr>
             <td colspan="5">{{ board.content }}</td>
         </tr>
+        {% if board.original_file_name %}
+        <tr>
+            <th>첨부파일</th>
+            <td colspan="4">
+                <!-- /board/0/download/ -->
+                <a href="{% url 'board:download' id=board.id %}">{{ board.original_file_name }}</a>
+            </td>
+        </tr>
+        {% endif %}
     </table>
     <br>
     <!-- username끼리 비교 -->
@@ -159,27 +362,23 @@
         <div id="replyList">
             <!-- board 객체 뿐만 아니라 board와 FK로 엮인 객체는 -->
             <!-- board.모델이름_set으로 가져올 수 있다 -->
-            <!-- {% if board.reply_set %}
-                {% for reply in board.reply_set.all %}
-                    {{reply}} &nbsp;&nbsp;&nbsp;
-                    <a href="#" onclick="javascript:showUpdateForm('{{reply.id}}')">수정</a>
-                    <a href="{% url 'board:delete_reply' id=board.id rid=reply.id %}">삭제</a>
-                    <br>
-                {% endfor %}
-            {% else %}
-                <p>등록된 댓글이 없습니다.</p>
-            {% endif %} -->
         </div>
         <!-- 댓글 입력 폼 -->
         <div id="replyForm">
-            {% csrf_token %}
-            <input type="hidden" name="rid" value="{{ reply.id }}">
-            <textarea id="replyText">{{reply.reply_content}}</textarea>
-            {% if not update %}
-            <input type="button" id="wr" value="댓글 쓰기" onclick="write_reply()">
-            {% else %}
-            <input type="button" id="ud" value="댓글 수정" onclick="load_reply_update()">
-            {% endif %}
+            <br>
+            <div id="writeForm">
+            <!-- <input type="hidden" name="rid" value="{{ reply.id }}"> -->
+                <textarea name="replyText" id="replyTextWrite"></textarea>
+                <input type="button" id="btnWrite" value="댓글 쓰기">
+                <!-- onclick="return validateReply(this);" -->
+                <!--  onclick="write_reply()" -->
+            </div>
+            <div id="updateForm">
+                <input type="hidden" name="rid" value="" id="rid">
+                <textarea name="replyText" id="replyTextUpdate"></textarea>
+                <input type="button" id="btnUpdate" value="댓글 수정">
+                <!-- onclick="load_reply_update()" -->
+            </div>
         </div>
     </div>
     <!-- board.author는 user하고 비교한다 -->

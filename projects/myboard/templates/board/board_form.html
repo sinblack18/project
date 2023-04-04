@@ -2,25 +2,70 @@
 {% extends 'common/base.html' %}
 {% block title %}[글쓰기]{% endblock title %}
 {% block body %}
+<!-- <script>
+    function checkwu() {
+
+        let title = document.getElementById('title1').value;
+        let content = document.getElementById('content').value;
+
+        if (title.length <= 5) {
+            alert("제목이 비어있거나 5글자 이하입니다.");
+            return false
+        }
+
+        if (content.length <= 10) {
+            alert("내용이 비어있거나 10글자 이하입니다.");
+            return false
+        }
+
+        if (title.split("바보").length >= 2) {
+            alert("제목에 바보는 들어가지 못합니다.");
+            return false
+        }
+
+        if (title.split("멍청이").length <= 2) {
+            alert("제목에 멍청이는 들어가지 못합니다.");
+            return false
+        }
+
+        if (title.split("한조").length <= 2) {
+            alert("제목에 한조는 들어가지 못합니다.");
+            return false
+        }
+
+        if (content.split("바보").length <= 2) {
+            alert("내용에 바보는 들어가지 못합니다.");
+            return false
+        }
+
+        if (content.split("멍청이").length <= 2) {
+            alert("내용에 멍청이는 들어가지 못합니다.");
+            return false
+        }
+
+        if (content.split("한조").length <= 2) {
+            alert("내용에 한조는 들어가지 못합니다.");
+            return false
+        }
+    }
+</script> -->
     <h1>글쓰기</h1>
-    <form action="{% url 'board:write' %}" method="post">
+    <form action="{% url 'board:write' %}" method="post" enctype="multipart/form-data" onsubmit="return checkwu();">
         {% csrf_token %}
         <table>
             <tr>
                 <th>제목</th>
-                <td><input type="text" name="title1"></td>
+                <td><input type="text" name="title1" id="title1"></td>
             </tr>
-            <!-- session에 writer가 없으면 해당 tr 표시 -->
-            <!-- session에 writer가 있으면 해당 tr 비표시 -->
-            <!-- {% if not request.session.writer %}
-            <tr>
-                <th>글쓴이</th>
-                <td><input type="text" name="writer"></td>
-            </tr>
-            {% endif %} -->
             <tr>
                 <th>내용</th>
-                <td><textarea name="content"></textarea></td>
+                <td><textarea name="content" id="content"></textarea></td>
+            </tr>
+            <tr>
+                <th>파일첨부</th>
+                <td>
+                    <input type="file" name="uploadFile">
+                </td>
             </tr>
             <tr>
                 <th colspan="2">
@@ -29,13 +74,6 @@
             </tr>
         </table>
     </form>
-    <!-- <form action="" method="post">
-        {% csrf_token %}
-        제목 &nbsp;&nbsp; : <input type="text" name="title1"><br><br>
-        글쓴이 : <input type="text" name="writer"><br><br>
-        내용 : <textarea cols="50" rows="3" name="content"></textarea><br><br>
-        <input type="submit" value="추가" />
-    </form> -->
     <br>
     <a href="../">글 목록</a>
 {% endblock body %}

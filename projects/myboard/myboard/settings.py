@@ -121,7 +121,7 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 
 # 별도 경로에서 static 파일을 읽어오게 하려면
@@ -140,3 +140,8 @@ LOGIN_REDIRECT_URL = '/'
 
 # 로그아웃 성공했을 때 리다이렉트 할 주소
 LOGOUT_REDIRECT_URL = '/'
+
+
+# 파일 업로드 관련
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = 'media/'

@@ -2,13 +2,38 @@
 {% extends 'common/base.html' %}
 {% block title %}[글 수정하기]{% endblock title %}
 {% block body %}
+    <script>
+        function validateFile() {
+            let file = document.getElementById("uploadFile");
+            console.log(file.value);
+
+            // 첨부파일이 있었는데 수정하면서 없을 때
+            if ( '{{board.original_file_name}}' !== "" && file.value ==="") {
+                let go = confirm("파일이 첨부되지 않았습니다. 계속하시겠습니까?");
+                if (go == true) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        function validateFile1() {
+            if(validateFile() == false) {
+                return false
+            }
+            if(checkwu() == false) {
+                return false
+            }
+        }
+    </script>
     <h1>글 수정하기</h1>
-    <form action="{% url 'board:update' board.id %}" method="post">
+    <form action="{% url 'board:update' board.id %}" method="post" enctype="multipart/form-data" onsubmit="return validateFile1();">
         {% csrf_token %}
         <table>
             <tr>
                 <th>제목</th>
-                <td><input type="text" name="title1"></td>
+                <td><input type="text" name="title1" id="title1" value="{{board.title1}}"></td>
             </tr>
             <!-- session에 writer가 없으면 해당 tr 표시 -->
             <!-- session에 writer가 있으면 해당 tr 비표시 -->
@@ -18,7 +43,16 @@
             </tr> -->
             <tr>
                 <th>내용</th>
-                <td><textarea name="content"></textarea></td>
+                <td><textarea name="content" id="content">{{ board.content }}</textarea></td>
+            </tr>
+            <tr>
+                <th>첨부파일</th>
+                <td>
+                    현재 첨부파일 :
+                    {% if board.original_file_name %} {{ board.original_file_name }}
+                    {% else %} 파일 없음 {% endif %}
+                    <input type="file" name="uploadFile" id="uploadFile" value="{{ board.original_file_name }}">
+                </td>
             </tr>
             <tr>
                 <th colspan="2">
