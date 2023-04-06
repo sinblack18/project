@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영화 등록</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script>
+        function addval() {
+
+            let movie_name = document.getElementById('movie_name').value;
+            let summary = document.getElementById('summary').value;
+            
+
+            if (movie_name == '' || summary == '') {
+                alert ("제목 또는 텍스트가 비어있습니다.");
+                return false
+
+            } else {
+                return true
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>[영화 정보 등록]</h1>
+    <div>
+        <form action="{% url 'movieadd' %}" method="post" onsubmit="return addval();">
+            {% csrf_token %}
+            <table border="1" style="text-align: center;">
+                <tr>
+                    <td>
+                        <select name="genre">
+                            <option value="액션" selected="selected">액션</option>
+                            <option value="코미디">코미디</option>
+                            <option value="로맨스">로맨스</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" name="movie_name" id="movie_name" placeholder="영화 제목">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <textarea name="summary" id="summary" cols="30" rows="10" placeholder="내용"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" value="등록하기">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>

@@ -98,6 +98,12 @@ def orderadd(request):
 
     if request.method == 'GET':
 
+        item = Item.objects.all()
+
+        context = {
+            'item': item
+        }
+
         return render(request, 'shoppingmall/orderadd.html')
 
     else:
@@ -106,12 +112,17 @@ def orderadd(request):
 
         quantity = request.POST['quantity']
 
-        Order.objects.create(
-            item_code_id=item_id,
-            quantity=quantity
-        )
+        if Order.objects.filter(item_code__id=item_id) != None:
 
-        return HttpResponseRedirect('/orderinfo/')
+            Order.objects.create(
+                item_code_id=item_id,
+                quantity=quantity
+            )
+
+            return HttpResponseRedirect('/orderinfo/')
+
+        else:
+            return HttpResponseRedirect('/orderinfo/')
 
 
 def orderupdate(request, id):

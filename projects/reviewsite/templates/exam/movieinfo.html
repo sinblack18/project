@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영화 정보</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            loadReviewList();
+            loadReviewCount();
+        })
+
+        function loadReviewList() {
+                $.ajax({
+                    url: '{% url "load_review" id=movie.id %}',
+                    type: 'get',
+                    success: function (res) {
+                        let str = "<table border='1'>";
+                        $.each(res.reviewList, function (index, item) {
+                            let replacedDate = item.reg_date.replace("T", " ").replace("Z", "").split(".")[0]
+
+                            str += "<tr>";
+                            str += "<td>" + item.reviewer_name + "</td>";
+                            str += "<td>" + item.review_text + "</td>";
+                            str += "<td>" + item.score + "</td>";
+                            str += "<td>" + replacedDate + "</td>"; 
+                            str += "</tr>";
+                        });
+                        str += "</table>";
+
+                        $("#review").html(str);
+                    }
+                })
+            }
+
+        function loadReviewCount() {
+                $.ajax({
+                    url: '{% url "load_review" id=movie.id %}',
+                    type: 'get',
+                    success: function (res) {
+                        let str = "<h3> 관객 평점 : ";
+                        let scorelist = [];
+                        $.each(res.reviewList, function (index, item) {
+                            scorelist.push(item.score);
+                        });
+                        console.log(scorelist);
+                        let result = scorelist.reduce(function add(sum, currValue) {
+                            return sum + currValue;
+                        }, 0);
+
+                        let average = result / scorelist.length;
+
+                        console.log(average);
+
+                        str += average;
+
+                        str += "</h3>";
+
+                        $("#score").html(str);
+                    }
+                })
+            }
+
+        function reviewcheck() {
+            let review_text = document.getElementById('review_text').value;
+            let score = document.getElementById('score2').value;
+
+            console.log(score);
+
+            if (review_text == '' || review_text.length <10) {
+                alert("리뷰 내용이 비어있거나 10글자 미만입니다.");
+                return false
+            }
+
+            else if (score == '' || score <0 || score > 10) {
+                alert("점수는 0~10점 입력할 수 있습니다.");
+                return false
+            }
+
+            else {
+                return true
+            }
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <h1>[{{movie.movie_name}}]에 대한 정보 입니다.</h1><br>
+        <h3>장르 : {{movie.genre}}</h3><br>
+        <p>영화 설명 : {{movie.movie_summary}}</p><br>
+    </div>
+    <div id="score">
+    </div>
+    <a href="{% url 'movieupdate' id=movie.id %}">영화 정보수정하기</a>
+    <br><a href="../../">뒤로</a>
+    <!-- <div>
+        <h2>[{{movie.movie_name}}] 관객 리뷰</h2>
+        <table border="1">
+            {% for r in review %}
+            <tr>
+                <td>{{r.reviewer_name}}</td>
+                <td>{{r.review_text}}</td>
+                <td>{{r.score}}</td>
+                <td>{{r.reg_date|date:"Y/m/d"}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div> -->
+    <div id="review">
+    </div>
+    <div>
+        <form action="{% url 'reviewadd' id=movie.id %}" method="post" onsubmit="return reviewcheck();">
+            {% csrf_token %}
+            <input type="text" name="reviewer_name" placeholder="닉네임">
+            <textarea name="review_text" id="review_text" cols="30" rows="2" placeholder="리뷰 내용"></textarea>
+            <input type="number" name="score" id="score2" placeholder="평점 0~10"><!-- min="0" max="10" -->
+            <input type="submit" value="댓글 등록">
+        </form>
+    </div>
+</body>
+</html>
